@@ -62,14 +62,14 @@ export const createBookingDB = async (req, res, next) => {
         price: price / 100,
       });
 
-      res.redirect(`FRONT_END_URL/payments?status=${true}&order=${orderId}`);
+      res.redirect(`${req.protocol}://${req.get('host')}/payments?status=${true}&order=${orderId}`);
     } else {
       const {
         error: { code, description },
       } = req.body;
 
       res.redirect(
-        `FRONT_END_URL/payments?status=${false}&code=${code}&err=${description}`
+        `${req.protocol}://${req.get('host')}/payments?status=${false}&code=${code}&err=${description}`
       );
     }
   } catch (err) {
