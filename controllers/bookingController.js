@@ -62,14 +62,14 @@ export const createBookingDB = async (req, res, next) => {
         price: price / 100,
       });
 
-      res.redirect(`${req.protocol}://${req.get('host')}/payments?status=${true}&order=${orderId}`);
+      res.redirect(`${https://react-natours.netlify.app}/payments?status=${true}&order=${orderId}`);
     } else {
       const {
         error: { code, description },
       } = req.body;
 
       res.redirect(
-        `${req.protocol}://${req.get('host')}/payments?status=${false}&code=${code}&err=${description}`
+        `${https://react-natours.netlify.app}/payments?status=${false}&code=${code}&err=${description}`
       );
     }
   } catch (err) {
