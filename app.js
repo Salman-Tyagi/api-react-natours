@@ -26,7 +26,7 @@ app.set('trust proxy', ip => {
 
 app.use(
   helmet({
-    crossOriginResourcePolicy: '*',
+    crossOriginResourcePolicy: false,
   })
 );
 
