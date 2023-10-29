@@ -54,7 +54,7 @@ app.use(
 );
 
 const limiter = limit({
-  max: 1000,
+  max: 3000,
   windowMs: 24 * 60 * 60 * 1000,
 });
 
