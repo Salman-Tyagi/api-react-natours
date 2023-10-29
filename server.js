@@ -7,8 +7,8 @@ process.on('uncaughtException', err => {
   process.exit(1);
 });
 
-// const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.PASSWORD);
-const DB = 'mongodb://localhost:27017/natours-latest';
+const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.PASSWORD);
+// const DB = 'mongodb://localhost:27017/natours-latest';
 
 (async () => {
   if (process.env.NODE_ENV === 'development') {
