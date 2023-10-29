@@ -129,12 +129,26 @@ export const login = catchAsync(async (req, res, next) => {
     '+password -__v'
   );
 
-  if (
-    !user ||
-    !(await user.correctPassword(req.body.password, user.password))
-  ) {
+  if (!user) {
     return next(new AppError('Incorrect email or password', 401));
   }
+
+  if (user.loginCount >= 3) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Login limit reached! Please reset your password',
+    });
+  }
+
+  if (!(await user.correctPassword(req.body.password, user.password))) {
+    // Increase count
+    user.loginCount += 1;
+    await user.save({ validateBeforeSave: false });
+    return next(new AppError('Incorrect email or password', 401));
+  }
+
+  user.loginCount = 0;
+  await user.save({ validateBeforeSave: false });
 
   // user.role = undefined;
   user.active = undefined;
@@ -344,6 +358,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     return next(new AppError('Your password reset link has expired', 401));
   }
 
+  user.loginCount = 0;
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
@@ -352,6 +367,8 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
   user.password = undefined;
   user.passwordChangedAt = undefined;
+  user.createdAt = undefined;
+  user.loginCount = undefined;
 
   // Update the passwordChangedAt property method
 

@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     default: true,
     select: false,
   },
+  loginCount: {
+    type: Number,
+    default: 0,
+  },
   photo: {
     type: String,
     // default: 'default.jpg',
