@@ -24,18 +24,27 @@ app.set('trust proxy', ip => {
   return true;
 });
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: 'self',
+        scriptSrc: ['self', 'https://react-node-build.onrender.com'],
+      },
+    },
+  })
+);
 
 // Body-parser, reading data from the req.body object
 app.use(express.json({ limit: '10kb' }));
+app.use(mongoSanitize());
+
 // For payments by third party
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
 app.options('*', cors());
-
-app.use(mongoSanitize());
 
 app.use(
   hpp({
