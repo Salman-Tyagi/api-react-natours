@@ -32,6 +32,9 @@ app.use(
         scriptSrc: ['self', 'https://react-node-build.onrender.com'],
       },
     },
+    crossOriginResourcePolicy: {
+      scriptSrc: ['self', 'http://localhost:5173'],
+    },
   })
 );
 
