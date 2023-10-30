@@ -1,4 +1,15 @@
+import { isCelebrateError } from 'celebrate';
 import AppError from '../utils/appError.js';
+
+const handleCelebrateError = err => {
+  const error = Array.from(err.details)[0][1].details[0];
+  const errObj = new AppError(error.message, 400);
+  return {
+    ...errObj,
+    error,
+    message: error.message,
+  };
+};
 
 const handleCastErrorDB = err => {
   const message = `Invalid ${err.path}: ${err.value}`;
@@ -9,7 +20,7 @@ const handleDuplicateErrorDB = err => {
   const duplicates = Object.keys(err.keyValue)
     .map(key => `${key}: ${err.keyValue[key]}`)
     .join('. ');
-  const message = `Duplicate value ${duplicates}`;
+  const message = `Duplicate ${duplicates}`;
   return new AppError(message, 400);
 };
 
@@ -36,13 +47,12 @@ const sendErrorDev = (err, req, res) => {
       message: err.message,
       stack: err.stack,
     });
-  }
-  // Render error
-  else {
-    res.status(err.statusCode).render('error', {
-      msg: err.message,
-      title: 'Page not found',
-      user: req.user,
+  } else {
+    res.status(500).json({
+      status: 'error',
+      error: err,
+      message: 'Something went wrong',
+      stack: err.stack,
     });
   }
 };
@@ -55,7 +65,7 @@ const sendErrorPro = (err, req, res) => {
         message: err.message,
       });
     } else {
-      console.log('ERROR ❌', err);
+      console.error('ERROR ❌', err);
       res.status(500).json({
         status: 'error',
         message: 'Something went wrong!',
@@ -71,6 +81,7 @@ const globalErrorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     let error = err;
 
+    if (isCelebrateError(err)) error = handleCelebrateError(err);
     if (err.name === 'CastError') error = handleCastErrorDB(err);
     if (err.code === 11000) error = handleDuplicateErrorDB(err);
     if (err.name === 'ValidationError') error = handleValidationErrorDB(err);
@@ -83,6 +94,7 @@ const globalErrorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'production') {
     let error = err;
 
+    if (isCelebrateError(err)) error = handleCelebrateError(err);
     if (err.name === 'CastError') error = handleCastErrorDB(err);
     if (err.code === 11000) error = handleDuplicateErrorDB(err);
     if (err.name === 'ValidationError') error = handleValidationErrorDB(err);

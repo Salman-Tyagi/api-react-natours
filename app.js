@@ -24,11 +24,7 @@ app.set('trust proxy', ip => {
   return true;
 });
 
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false,
-  })
-);
+app.use(helmet());
 
 // Body-parser, reading data from the req.body object
 app.use(express.json({ limit: '10kb' }));
@@ -54,7 +50,7 @@ app.use(
 );
 
 const limiter = limit({
-  max: 2003,
+  max: 2000,
   windowMs: 24 * 60 * 60 * 1000,
   message: 'Too many request from this IP, Please try again after 24 hours',
 });

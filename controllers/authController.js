@@ -150,9 +150,11 @@ export const login = catchAsync(async (req, res, next) => {
   user.loginCount = 0;
   await user.save({ validateBeforeSave: false });
 
-  // user.role = undefined;
   user.active = undefined;
   user.password = undefined;
+  user.createdAt = undefined;
+  user.passwordChangedAt = undefined;
+  user.loginCount = undefined;
 
   // If everything ok, send the token to client
   createSendToken(user, 200, req, res);

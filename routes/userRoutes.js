@@ -1,27 +1,15 @@
 import express from 'express';
 import * as userController from '../controllers/userController.js';
 import * as authController from '../controllers/authController.js';
-
-const loginResposnse = async (req, res, next) => {
-  if (limiter)
-    return res.json({
-      status: 'fail',
-      message: 'You have reached the login limit! Please login after 1 hour',
-    });
-
-  return next();
-};
+import { loginValidattion, signupValidation } from '../utils/validators.js';
 
 const router = express.Router();
 
-router.post('/signup', authController.signup);
-
-router.post('/login', authController.login);
-
-router.get('/logout', authController.logout);
-
+router.post('/signup', signupValidation, authController.signup);
+router.post('/login', loginValidattion, authController.login);
 router.post('/forgot-password', authController.forgotPassword);
 router.patch('/reset-password/:token', authController.resetPassword);
+router.get('/logout', authController.logout);
 
 router.use(authController.protect);
 
